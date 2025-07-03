@@ -7,6 +7,8 @@ import com.aluracursos.screenmatch.model.Episodio;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -50,7 +52,8 @@ public class Principal {
         }
         //temporadas.forEach(System.out::println);
         System.out.println(" ");
-        //MOSTRAR SOLO EL TITULO DE LOS EPISODIOS PARA LAS temporadas
+
+        //MOSTRAR SOLO EL TITULO DE LOS EPISODIOS PARA LAS TEMPORADAS
 
         temporadas.forEach(t-> t.episodios().forEach(e->
                 System.out.println(e.titulo())));
@@ -62,6 +65,7 @@ public class Principal {
                 .collect(Collectors.toList());
 
         //top 5 episodios
+
         System.out.println("Top 5 Episodios");
 
         datosEpisodios.stream()
@@ -70,13 +74,34 @@ public class Principal {
                 .limit(5)
                 .forEach(System.out::println);
 
-        //convirteiendo los datso a una lista del tipo epísodio
+        //convirteiendo los datos a una lista del tipo epísodio
+
         List<Episodio> episodios = temporadas.stream()
                 .flatMap(t -> t.episodios().stream()
                         .map(d-> new Episodio(t.numero() ,d)))
 
                 .collect(Collectors.toList());
 
+        episodios.forEach(System.out::println);
+
+
+
+//BUSQUEDA DE EPISODIOS POR AÑO
+        System.out.println("A partir de que año desea ver los episodios");
+        var fecha = teclado.nextInt();
+        teclado.nextLine();
+
+        //
+        LocalDate fechaBusqueda = LocalDate.of(fecha, 1, 1);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        episodios.stream()
+                .filter(e->e.getFechaDeLanzamiento() != null && e.getFechaDeLanzamiento().isAfter(fechaBusqueda))
+                .forEach(e-> System.out.println("Temporada " + e.getTemporada()+
+                        "Episodio " + e.getTitulo() +
+                        "Fecha de Lanamiento" + e.getFechaDeLanzamiento().format(dtf)
+                ));
 
 
 
